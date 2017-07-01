@@ -1,0 +1,25 @@
+{
+  "name": "js-app-simulator",
+  "version": "1.0.0",
+  "description": "Configurable Application simulator for integration testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "skuttleman@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.3",
+    "express": "^4.15.3",
+    "express-ws": "^3.0.0",
+    "fun-util": "^1.2.0",
+    "redux": "^3.7.0",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "glob": "^7.1.2",
+    "gulp": "^3.9.1",
+    "jasmine": "^2.6.0"
+  }
+}
