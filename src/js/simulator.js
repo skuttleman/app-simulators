@@ -1,8 +1,9 @@
-const buildHttpSimulator = require('./tool/buildHttpSimulator');
-const buildSocketSimulator = require('./tool/buildSocketSimulator');
+const buildHttpSimulator = require('./api/buildHttpSimulator');
+const buildSocketSimulator = require('./api/buildSocketSimulator');
 const express = require('express');
-const { groupBy, partial, thread } = require('fun-util');
-const setupMiddleware = require('./tool/setupMiddleware');
+const { groupBy, partial, silent, thread } = require('fun-util');
+const { readFileSync } = require('fs');
+const setupMiddleware = require('./api/setupMiddleware');
 
 const simulator = config => {
   const { socket, http } = groupBy(config, ({ socket }) => socket ? 'socket' : 'http');
@@ -14,4 +15,11 @@ const simulator = config => {
   )();
 };
 
+const readFixture = thread(
+  readFileSync,
+  String,
+  silent(JSON.parse)
+);
+
 module.exports = simulator;
+module.exports.readFixture = readFixture;

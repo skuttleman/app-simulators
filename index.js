@@ -1,1 +1,1 @@
-module.exports = require('./src/js/simulator');
+module.exports = require('./lib/js/simulator');

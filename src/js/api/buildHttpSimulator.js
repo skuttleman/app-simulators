@@ -41,9 +41,10 @@ const buildSimulator = (app, path, settings) => {
 
 const setMainRoute = ({ app, method, path, getState, dispatch }) => {
   app[method](path, (request, response) => {
-    const { settings: { delay, status, respond } } = getState();
+    const { settings: { delay, status, respond, headers } } = getState();
     dispatch({ type: STORE_REQUEST, request });
-    sleep(delay * 1000).then(() => respond(request, response.status(status)));
+    response.status(status).set(headers);
+    sleep(delay * 1000).then(() => respond(request, response));
   });
 };
 

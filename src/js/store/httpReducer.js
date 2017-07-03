@@ -6,6 +6,7 @@ const DEFAULT_SETTINGS = {
   delay: 0,
   response: null,
   status: 200,
+  headers: {},
   name: '',
   description: '',
   group: ''
@@ -13,10 +14,11 @@ const DEFAULT_SETTINGS = {
 
 const transformSettings = (...settings) => {
   const merged = concat(...settings);
-  return concat(merged, {
+  return {
+    ...merged,
     method: merged.method.toLowerCase(),
     respond: respond(merged.response)
-  });
+  };
 };
 
 const respond = body => {

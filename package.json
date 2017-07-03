@@ -4,11 +4,17 @@
   "description": "Configurable Application simulator for integration testing",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test"
+    "build": "./node_modules/gulp/bin/gulp.js transpile:all",
+    "prepublish": "npm test && npm run build",
+    "test": "./node_modules/gulp/bin/gulp.js test",
+    "test:watch": "./node_modules/gulp/bin/gulp.js test:watch"
   },
   "author": "skuttleman@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.16.2",
+    "babel": "^6.5.2",
+    "babel-preset-stage-1": "^6.16.0",
     "body-parser": "^1.17.2",
     "cors": "^2.8.3",
     "express": "^4.15.3",
@@ -18,8 +24,15 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "babel-register": "^6.18.0",
+    "del": "^2.2.2",
     "glob": "^7.1.2",
     "gulp": "^3.9.1",
-    "jasmine": "^2.6.0"
+    "gulp-babel": "^6.1.2",
+    "gulp-jasmine": "^2.4.2",
+    "jasmine": "^2.6.0",
+    "jasmine-spec-reporter": "^2.7.0",
+    "proxyquire": "^1.7.11",
+    "ws": "^3.0.0"
   }
 }

@@ -36,21 +36,17 @@ const buildSimulator = (app, path, settings) => {
     return clients;
   }));
 
-  app.post(`/api/send${path}`, respond(({ body }) => {
-    send(app.wsServer.getWss().clients, body);
-  }));
-
   app.post(`/api/send${path}`, respond(({ body, query: { to } }) => {
-    send(app.wsServer.getWss().clients, body, ({ id }) => id === to);
+    send(app.wsServer.getWss().clients, body, to);
   }));
 
   return reset;
 };
 
-const send = (clients, body, filter = () => true) => {
+const send = (clients, body, filterId) => {
   const message = typeof body === 'string' ? body : JSON.stringify(body);
   Array.from(clients)
-    .filter(filter)
+    .filter(({ id }) => !filterId || id === filterId)
     .forEach(client => client.send(message));
 };
 
@@ -82,7 +78,7 @@ const handleMessage = ({ dispatch, echo, onmessage, socket, clients }) => msg =>
 };
 
 const socketDo = clients => (data, socketId) => {
-  send(clients, data, id => !socketId || id === socketId);
+  send(clients, data, socketId);
 };
 
 module.exports = buildSocketSimulator;
