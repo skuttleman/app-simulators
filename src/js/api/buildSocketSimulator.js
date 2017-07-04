@@ -1,6 +1,6 @@
 const {
   INITIALIZE, RESET_MESSAGES, STORE_MESSAGE
-} = require('../store/actionTypes');
+} = require('../config/actionTypes');
 const { buildResettableRoutes, respond } = require('./buildSimulator');
 const { createServer } = require('http');
 const { createStore } = require('redux');
@@ -13,6 +13,9 @@ const buildSocketSimulator = (config, app) => {
   const server = createServer(app);
   app.wsServer = ws(app, server);
   app.resetSocketSims = buildResettableRoutes(buildSimulator, config, app);
+
+  app.ws('*', ws => ws.close());
+
   return server;
 };
 

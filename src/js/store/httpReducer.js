@@ -1,16 +1,9 @@
+const {
+  INITIALIZE, CLEAR_REQUESTS, RESET_RESPONSE, SET_RESPONSE, STORE_REQUEST
+} = require('../config/actionTypes');
+const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
 const { combineReducers } = require('redux');
 const { concat, filter } = require('fun-util');
-
-const DEFAULT_SETTINGS = {
-  method: 'get',
-  delay: 0,
-  response: null,
-  status: 200,
-  headers: {},
-  name: '',
-  description: '',
-  group: ''
-};
 
 const transformSettings = (...settings) => {
   const merged = concat(...settings);
@@ -35,10 +28,10 @@ const respond = body => {
 
 const requests = (state = [], { type, request }) => {
   switch (type) {
-    case 'INITIALIZE':
-    case 'CLEAR_REQUESTS':
+    case INITIALIZE:
+    case CLEAR_REQUESTS:
       return [];
-    case 'STORE_REQUEST':
+    case STORE_REQUEST:
       const { query, body, url, params } = request;
       const timestamp = new Date;
       return state.concat({ query, body, url, params, timestamp });
@@ -47,12 +40,12 @@ const requests = (state = [], { type, request }) => {
   }
 }
 
-const settings = (state = DEFAULT_SETTINGS, { type, settings, response, status, delay }) => {
+const settings = (state = DEFAULT_HTTP_SIMULATOR_SETTINGS, { type, settings, response, status, delay }) => {
   switch (type) {
-    case 'INITIALIZE':
-    case 'RESET_RESPONSE':
-      return transformSettings(DEFAULT_SETTINGS, settings);
-    case 'SET_RESPONSE':
+    case INITIALIZE:
+    case RESET_RESPONSE:
+      return transformSettings(DEFAULT_HTTP_SIMULATOR_SETTINGS, settings);
+    case SET_RESPONSE:
       return transformSettings(state, filter({ response, status, delay }, value => value !== undefined));
     default:
       return state;

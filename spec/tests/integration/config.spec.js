@@ -1,4 +1,4 @@
-const { HTTP_METHODS } = require('../../support/consts');
+const { HTTP_METHODS } = require('../../../src/js/config/consts');
 const { sims } = require('../../helpers/simulatorHelpers');
 const runApp = require('../../support/runApp');
 

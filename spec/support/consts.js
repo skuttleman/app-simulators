@@ -1,4 +1,3 @@
-const HTTP_METHODS = ['get', 'put', 'patch', 'post', 'delete'];
 const SIMULATORS = {
   '/test': {
     response: { some: 'response' },
@@ -64,7 +63,6 @@ const SIMULATORS = {
 const PORT = 8000;
 
 module.exports = {
-  HTTP_METHODS,
   SIMULATORS,
   PORT
 };

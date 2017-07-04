@@ -1,8 +1,9 @@
 const {
   CLEAR_REQUESTS, INITIALIZE, RESET_RESPONSE, SET_RESPONSE, STORE_REQUEST
-} = require('../store/actionTypes');
+} = require('../config/actionTypes');
+const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
 const { buildResettableRoutes, respond } = require('./buildSimulator');
-const { compose, reduce, sleep } = require('fun-util');
+const { sleep } = require('fun-util');
 const { createStore } = require('redux');
 const httpReducer = require('../store/httpReducer');
 

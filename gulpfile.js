@@ -1,10 +1,44 @@
 require('babel-core/register');
 
 const babel = require('gulp-babel');
+const babelify = require('babelify');
+const browserify = require('browserify');
+const del = require('del');
 const glob = require('glob');
 const gulp = require('gulp');
-const del = require('del');
+const { ifn } = require('fun-util');
+const { noop } = require('gulp-util');
 const jasmine = require('gulp-jasmine');
+const source = require('vinyl-source-stream');
+const streamify = require('gulp-streamify');
+
+const BROWSERIFY_CONFIG = {
+  extensions: ['.jsx', '.js'],
+  debug: true,
+  cache: {},
+  packageCache: {},
+  fullPaths: true,
+  entries: './src/js/app/main.js'
+};
+
+const BABELIFY_CONFIG = {
+  presets: ['es2015', 'react', 'stage-1'],
+  ignore: 'node_modules'
+};
+
+const errorReporter = ({ build }) => {
+  return function (error) {
+    console.error(error);
+    if (build) {
+      process.exit(1);
+    }
+    this.emit('end');
+  };
+};
+
+const buildOnly = (condition, action, ...args) => {
+  return ifn(() => condition, action, noop)(...args);
+};
 
 const toFilePath = file => {
   return file.split('/src')[1].split('/');
@@ -20,7 +54,7 @@ const toDirectory = file => {
   return filePath.join('/');
 };
 
-const testError = exit => function(err) {
+const testError = exit => function (err) {
   if (err.name && err.message && err.codeFrame) {
     console.error(err.name + ':', err.message);
     console.error(err.codeFrame, '\n');
@@ -36,7 +70,16 @@ const test = exit => () => {
     .pipe(jasmine().on('error', testError(exit)));
 };
 
-let srcFiles = glob.sync(`${__dirname}/src/**/*.js`);
+let srcFiles = glob.sync(`${__dirname}/src/**/*.js`, { ignore: `${__dirname}/src/js/app/**/*.js` });
+
+const jsTranspile = (config = {}) => () => {
+  return browserify(BROWSERIFY_CONFIG)
+    .transform(babelify.configure(BABELIFY_CONFIG))
+    .bundle()
+    .on('error', errorReporter(config))
+    .pipe(source('app.js'))
+    .pipe(gulp.dest('build/js'));
+};
 
 srcFiles.forEach(file => {
   var taskName = toTranspile(file);
@@ -46,12 +89,28 @@ srcFiles.forEach(file => {
     .pipe(gulp.dest(`lib/${toDirectory(file)}`)));
 });
 
-gulp.task('clean', () => {
+gulp.task('clean:lib', () => {
   return del('lib');
 });
 
-gulp.task('transpile:all', ['clean'], () => {
+gulp.task('clean:build/js', () => {
+  return del('build/js');
+});
+
+gulp.task('clean:build/css', () => {
+  return del('build/css');
+});
+
+gulp.task('clean', ['clean:lib', 'clean:build/js', 'clean:build/css']);
+
+gulp.task('transpile:api', () => {
   return gulp.start(srcFiles.map(toTranspile));
+});
+
+gulp.task('transpile:app', jsTranspile());
+
+gulp.task('transpile:all', ['clean'], () => {
+  return gulp.start(['transpile:api', 'transpile:app']);
 });
 
 gulp.task('test:continue', test());

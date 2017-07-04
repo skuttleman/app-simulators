@@ -1,4 +1,5 @@
-const { HTTP_METHODS, PORT } = require('../support/consts');
+const { HTTP_METHODS } = require('../../src/js/config/consts');
+const { PORT } = require('../support/consts');
 const axios = require('axios');
 
 const sims = HTTP_METHODS.reduce((sims, method) => {
