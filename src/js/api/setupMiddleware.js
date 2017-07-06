@@ -2,6 +2,8 @@ const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
 const bodyParser = require('body-parser');
 const { concat, reduce, type } = require('fun-util');
 const cors = require('cors');
+const { resetAll, simulators } = require('../config/urls/api');
+const { resetSimulators } = require('./simulatorApi');
 const { respond } = require('./buildSimulator');
 
 const mapSim = (sim, path) => {
@@ -19,16 +21,13 @@ const getSimList = config => {
 };
 
 const setupMiddleware = (app, config) => {
-  const simulators = getSimList(config);
+  const sims = getSimList(config);
   app.use(cors());
   app.use(bodyParser.json());
 
-  app.delete('/api/reset-all', respond(() => {
-    app.resetHttpSims();
-    app.resetSocketSims();
-  }));
+  app.delete(resetAll(), respond(() => resetSimulators()));
 
-  app.get('/api/simulators', respond(() => simulators));
+  app.get(simulators(), respond(() => sims));
 
   return app;
 };

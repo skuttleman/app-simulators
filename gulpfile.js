@@ -113,6 +113,10 @@ gulp.task('transpile:all', ['clean'], () => {
   return gulp.start(['transpile:api', 'transpile:app']);
 });
 
+gulp.task('transpile:watch', ['transpile:all'], () => {
+  return gulp.watch(['src/**/*.js', 'src/**/*.jsx'], ['transpile:all']);
+});
+
 gulp.task('test:continue', test());
 
 gulp.task('test', test(true));

@@ -9,9 +9,9 @@ describe('Configured Simulator', () => {
     server = runApp(done);
   });
 
-  describe('/test', () => {
+  describe('/simulators/test', () => {
     beforeEach(() => {
-      request = sims.get('/test');
+      request = sims.get('/simulators/test');
     });
 
     it('returns configured body', done => {
@@ -27,9 +27,9 @@ describe('Configured Simulator', () => {
     });
   });
 
-  describe('/some-path', () => {
+  describe('/simulators/some-path', () => {
     beforeEach(() => {
-      request = sims.post('/some-path');
+      request = sims.post('/simulators/some-path');
     });
 
     it('returns configured body', done => {
@@ -45,9 +45,9 @@ describe('Configured Simulator', () => {
     });
   });
 
-  describe('/headers', () => {
+  describe('/simulators/headers', () => {
     beforeEach(() => {
-      request = sims.delete('/headers');
+      request = sims.delete('/simulators/headers');
     });
 
     it('returns configured headers', done => {
@@ -65,12 +65,12 @@ describe('Configured Simulator', () => {
     });
   });
 
-  describe('/delay', () => {
+  describe('/simulators/delay', () => {
     let before;
 
     beforeEach(() => {
       before = new Date;
-      request = sims.get('/delay');
+      request = sims.get('/simulators/delay');
     });
 
     it('waits 0.5 second before responding', done => {
@@ -82,12 +82,12 @@ describe('Configured Simulator', () => {
     });
   });
 
-  describe('/smart/path', () => {
+  describe('/simulators/smart/path', () => {
     let randomBody;
 
     beforeEach(() => {
       randomBody = { random: String(Math.random() * 1000) };
-      request = sims.put('/smart/path', randomBody);
+      request = sims.put('/simulators/smart/path', randomBody);
     });
 
     it('returns the supplied body', done => {
@@ -103,25 +103,25 @@ describe('Configured Simulator', () => {
     });
   });
 
-  describe('/path/:with-param', () => {
+  describe('/simulators/path/:with-param', () => {
     it('accepts request with a value', done => {
-      sims.get('/path/param-value')
+      sims.get('/simulators/path/param-value')
         .then(({ data }) => expect(data).toEqual({ a: 'ok' }))
         .then(done);
     });
 
     it('accepts request without a value', done => {
-      sims.get('/path/:withParam')
+      sims.get('/simulators/path/:withParam')
         .then(({ data }) => expect(data).toEqual({ a: 'ok' }))
         .then(done);
     });
   });
 
-  describe('/multi-method', () => {
+  describe('/simulators/multi-method', () => {
     HTTP_METHODS.forEach(method => {
       describe(`with method: ${method.toUpperCase()}`, () => {
         beforeEach(() => {
-          request = sims[method]('/multi-method', {});
+          request = sims[method]('/simulators/multi-method', {});
         });
 
         it('responds with the configured status', done => {

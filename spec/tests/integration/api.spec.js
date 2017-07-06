@@ -23,7 +23,7 @@ describe('Simulator API', () => {
         beforeEach(done => {
           resetSims()
             .then(() => sims.put(`/api/response/${method}${path}`, { delay: 0 }))
-            .then(() => request = sims[method](path, {}))
+            .then(() => request = sims[method](`/simulators${path}`, {}))
             .then(done);
         });
 
@@ -32,15 +32,15 @@ describe('Simulator API', () => {
             sims.get(`/api/requests/${method}${path}`)
               .then(({ data }) => {
                 expect(data.length).toEqual(1);
-                expect(data[0].url).toEqual(path);
+                expect(data[0].url).toEqual(`/simulators${path}`);
                 expect(data[0].timestamp).toMatch(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z$/);
               }).then(done);
           });
 
           it('stores multiple requests in ascending order', done => {
             request
-              .then(() => sims[method](`${path}?order=middle`, {}))
-              .then(() => sims[method](`${path}?order=last`, {}))
+              .then(() => sims[method](`/simulators${path}?order=middle`, {}))
+              .then(() => sims[method](`/simulators${path}?order=last`, {}))
               .then(() => sims.get(`/api/requests/${method}${path}`))
               .then(({ data }) => {
                 expect(data.length).toEqual(3);
@@ -52,7 +52,7 @@ describe('Simulator API', () => {
 
           it('resets the requests', done => {
             request
-              .then(() => sims[method](path, {}))
+              .then(() => sims[method](`/simulators${path}`, {}))
               .then(() => sims.delete(`/api/requests/${method}${path}`))
               .then(() => sims.get(`/api/requests/${method}${path}`))
               .then(({ data }) => expect(data).toEqual([]))
@@ -62,7 +62,7 @@ describe('Simulator API', () => {
           it('only resets the requests', done => {
             sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' } })
               .then(() => sims.delete(`/api/requests/${method}${path}`))
-              .then(() => sims[method](path, {}))
+              .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ data }) => expect(data).toEqual({ updated: 'response' }))
               .then(done);
           });
@@ -71,14 +71,14 @@ describe('Simulator API', () => {
         describe('response', () => {
           it('updates the response body', done => {
             sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' } })
-              .then(() => sims[method](path, {}))
+              .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ data }) => expect(data).toEqual({ updated: 'response' }))
               .then(done);
           });
 
           it('updates the response status', done => {
             sims.put(`/api/response/${method}${path}`, { status: 400, response: '' })
-              .then(() => sims[method](path, {}))
+              .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ status }) => expect(status).toEqual(400))
               .then(done);
           });
@@ -88,7 +88,7 @@ describe('Simulator API', () => {
             sims.put(`/api/response/${method}${path}`, { delay: 0.15 })
               .then(() => {
                 before = new Date;
-                return sims[method](path, {});
+                return sims[method](`/simulators${path}`, {});
               }).then(() => expect(new Date() - before).not.toBeLessThan(150))
               .then(done);
           });
@@ -99,7 +99,7 @@ describe('Simulator API', () => {
               .then(() => sims.delete(`/api/response/${method}${path}`))
               .then(() => {
                 before = new Date;
-                return sims[method](path, {});
+                return sims[method](`/simulators${path}`, {});
               }).then(({ data, status }) => {
                 if (path != '/delay') {
                   expect(new Date() - before).toBeLessThan(100);
@@ -111,7 +111,7 @@ describe('Simulator API', () => {
 
           it('only resets the response', done => {
             sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' }, status: 400, delay: 0.1 })
-              .then(() => sims[method](path, {}))
+              .then(() => sims[method](`/simulators${path}`, {}))
               .then(() => sims.delete(`/api/response/${method}${path}`))
               .then(() => sims.get(`/api/requests/${method}${path}`))
               .then(({ data }) => expect(data).not.toEqual([]))
@@ -128,7 +128,7 @@ describe('Simulator API', () => {
         return promises.concat(Promise.all(methods.map(method => {
           return Promise.all([
             sims.put(`/api/response/${method}${path}`, { response: { some: 'updated response' }, status: 401 }),
-            sims[method](path, {})
+            sims[method](`/simulators${path}`, {})
           ]);
         })));
       }, [])).then(() => sims.delete('/api/reset-all'))
@@ -145,13 +145,13 @@ describe('Simulator API', () => {
           });
 
           it('does not have the updated response', done => {
-            sims[method](path, {})
+            sims[method](`/simulators${path}`, {})
               .then(({ data, status }) => expect(data).not.toEqual({ some: 'updated response' }))
               .then(done);
           });
 
           it('does not have the updated status', done => {
-            sims[method](path, {})
+            sims[method](`/simulators${path}`, {})
               .then(({ data, status }) => expect(status).not.toEqual(401))
               .then(done);
           });

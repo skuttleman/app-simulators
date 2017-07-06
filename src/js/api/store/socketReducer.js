@@ -1,6 +1,6 @@
 const {
   INITIALIZE, RESET_MESSAGES, STORE_MESSAGE
-} = require('../config/actionTypes');
+} = require('../../config/actionTypes');
 const { combineReducers } = require('redux');
 
 const messages = (state = [], { type, message, from }) => {

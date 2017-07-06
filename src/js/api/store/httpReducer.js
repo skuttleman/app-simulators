@@ -1,7 +1,7 @@
 const {
   INITIALIZE, CLEAR_REQUESTS, RESET_RESPONSE, SET_RESPONSE, STORE_REQUEST
-} = require('../config/actionTypes');
-const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
+} = require('../../config/actionTypes');
+const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../../config/consts');
 const { combineReducers } = require('redux');
 const { concat, filter } = require('fun-util');
 

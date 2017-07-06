@@ -11,7 +11,7 @@ describe('Socket API', () => {
     beforeEach(done => {
       messageReceived = new Promise(resolve => {
         server = runApp(() => {
-            socket = new WebSocket(`ws://localhost:${PORT}/socket`);
+            socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
             socket.onopen = done;
           }, {
             '/socket': {
@@ -59,7 +59,7 @@ describe('Socket API', () => {
     beforeEach(done => {
       messageReceived = new Promise(resolve => {
         server = runApp(() => {
-            socket = new WebSocket(`ws://localhost:${PORT}/socket`);
+            socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
             socket.onopen = done;
           }, {
             '/socket': {
@@ -72,9 +72,9 @@ describe('Socket API', () => {
 
     it('broadcasts message with callback', done => {
       new Promise(resolve => {
+          socket.onmessage = ({ data }) => resolve(data);
           socket.send('callback message');
           messageReceived.then(({ cb, message }) => cb({ callback: message }));
-          socket.onmessage = ({ data }) => resolve(data);
         }).then(JSON.parse)
         .then(message => expect(message).toEqual({ callback: 'callback message' }))
         .then(done);
@@ -99,7 +99,7 @@ describe('Socket API', () => {
     beforeEach(done => {
       resetSims()
         .then(() => {
-          socket = new WebSocket(`ws://localhost:${PORT}/socket`);
+          socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
           socket.onopen = () => {
             socket.send('any message');
             socket.onmessage = done;
@@ -117,7 +117,7 @@ describe('Socket API', () => {
     });
 
     it('sends a message', done => {
-      sims.post('/api/send/socket', { message: 'message' });
+      sims.post('/api/messages/socket', { message: 'message' });
       new Promise(resolve => {
           socket.onmessage = ({ data }) => resolve(data);
         }).then(JSON.parse)
@@ -130,7 +130,7 @@ describe('Socket API', () => {
       let socket2, ids;
 
       beforeEach(done => {
-        socket2 = new WebSocket(`ws://localhost:${PORT}/socket`);
+        socket2 = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
         socket2.onopen = () => {
           socket.send('any message2');
           socket.onmessage = () => {
@@ -142,7 +142,7 @@ describe('Socket API', () => {
       });
 
       it('broadcasts a message to all clients', done => {
-        sims.post('/api/send/socket', { message: 'message' });
+        sims.post('/api/messages/socket', { message: 'message' });
         Promise.all([
             new Promise(resolve => socket.onmessage = ({ data }) => resolve(data)),
             new Promise(resolve => socket2.onmessage = ({ data }) => resolve(data)),
@@ -160,8 +160,8 @@ describe('Socket API', () => {
         socket2.onmessage = ({ data }) => socket2Spy(JSON.parse(data));
 
         Promise.all([
-          sims.post(`/api/send/socket?to=${ids[0]}`, { message: 'message1' }),
-          sims.post(`/api/send/socket?to=${ids[1]}`, { message: 'message2' })
+          sims.post(`/api/messages/socket?to=${ids[0]}`, { message: 'message1' }),
+          sims.post(`/api/messages/socket?to=${ids[1]}`, { message: 'message2' })
         ]).then(() => sleep(200))
           .then(() => {
             expect(socket1Spy).toHaveBeenCalledTimes(1);

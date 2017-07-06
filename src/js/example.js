@@ -6,8 +6,9 @@ simulator({
     method: 'Patch',
     response: ({ body }) => body
   },
-  '/test': {
-    response: { a: 'test' }
+  '/test/a/:param': {
+    response: { a: 'test' },
+    group: 'Test Group'
   },
   '/socket': {
     socket: true,

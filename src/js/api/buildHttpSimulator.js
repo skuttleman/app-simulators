@@ -3,12 +3,16 @@ const {
 } = require('../config/actionTypes');
 const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
 const { buildResettableRoutes, respond } = require('./buildSimulator');
-const { sleep } = require('fun-util');
 const { createStore } = require('redux');
-const httpReducer = require('../store/httpReducer');
+const httpReducer = require('./store/httpReducer');
+const { registerReset } = require('./simulatorApi');
+const { requests, response } = require('../config/urls/api');
+const { sleep } = require('fun-util');
+const { simulators } = require('../config/urls/simulators');
 
 const buildHttpSimulator = (config, app) => {
-  app.resetHttpSims = buildResettableRoutes(buildSimulator, config, app);
+  const reset = buildResettableRoutes(buildSimulator, config, app);
+  registerReset(reset);
 
   return app;
 };
@@ -21,19 +25,17 @@ const buildSimulator = (app, path, settings) => {
 
   setMainRoute({ app, method, path, getState, dispatch });
 
-  app.get(`/api/requests/${method}${path}`, respond(() => {
-    return getState().requests;
-  }));
+  app.get(requests(method, path), respond(() => getState().requests));
 
-  app.delete(`/api/requests/${method}${path}`, respond(() => {
+  app.delete(requests(method, path), respond(() => {
     dispatch({ type: CLEAR_REQUESTS });
   }));
 
-  app.put(`/api/response/${method}${path}`, respond(({ body: { response, status, delay } }) => {
+  app.put(response(method, path), respond(({ body: { response, status, delay } }) => {
     dispatch({ type: SET_RESPONSE, response, status, delay });
   }));
 
-  app.delete(`/api/response/${method}${path}`, respond(() => {
+  app.delete(response(method, path), respond(() => {
     dispatch({ type: RESET_RESPONSE, settings });
   }));
 
@@ -41,7 +43,7 @@ const buildSimulator = (app, path, settings) => {
 };
 
 const setMainRoute = ({ app, method, path, getState, dispatch }) => {
-  app[method](path, (request, response) => {
+  app[method](simulators(path), (request, response) => {
     const { settings: { delay, status, respond, headers } } = getState();
     dispatch({ type: STORE_REQUEST, request });
     response.status(status).set(headers);

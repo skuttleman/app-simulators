@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import connectAll from '../store/connectors/connectAll';
 import getSimulators from '../actions/getSimulators';
 
 class App extends Component {
@@ -17,4 +17,4 @@ class App extends Component {
   }
 }
 
-export default connect(state => state)(App);
+export default connectAll(App);

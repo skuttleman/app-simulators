@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/gulp/bin/gulp.js transpile:all",
+    "dev": "./node_modules/gulp/bin/gulp.js transpile:watch & nodemon lib/js/example.js",
     "prepublish": "npm test && npm run build",
     "start": "npm run build && node lib/js/example.js",
     "test": "./node_modules/gulp/bin/gulp.js test",
