@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
-import { find, reduce, thread } from 'fun-util';
 
-export default connect(({ dispatch, path, simulators }) => ({
+export default connect(({ dispatch, connectedSockets }, { path }) => ({
   dispatch,
-  simulator: simulators.find(simulator => simulator.path === path)
+  sockets: connectedSockets[path] || []
 }));

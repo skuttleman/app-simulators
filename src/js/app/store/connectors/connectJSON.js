@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
+import { pretty } from '../../utils/json';
 
 export default key => connect(state => ({
   ...state,
-  [key]: JSON.stringify(state[key], null, 2)
+  [key]: pretty(state[key])
 }));

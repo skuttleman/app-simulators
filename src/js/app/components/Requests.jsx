@@ -14,10 +14,10 @@ class Requests extends Component {
     const { method, path } = getIn(this.props, 'location', 'query') || {};
     const { requests } = this.props;
     return (
-      <div>
+      <div className="stored requests">
         <h1>Requests</h1>
-        <div>{method}: {path}</div>
-        <pre>{requests}</pre>
+        <div className="url">{method}: {path}</div>
+        <div className="json"><pre><code>{requests}</code></pre></div>
       </div>
     );
   }

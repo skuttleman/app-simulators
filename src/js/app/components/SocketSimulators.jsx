@@ -9,14 +9,11 @@ class SocketSimulators extends Component {
     const groups = Object.keys(simulators);
     if (groups.length) {
       return (
-        <div>
-          <h2>Http Simulators</h2>
-          <ul>
-            {groups.map((group, key) => {
-              return SimulatorGroup.group(SocketSimulator, simulators[group], group, key);
-            })}
-          </ul>
-          <button>Broadcast Message</button>
+        <div className="simulators socketSimulators">
+          <h2>Socket Simulators</h2>
+          {groups.map((group, key) => (
+            SimulatorGroup.group(SocketSimulator, simulators[group], group, key)
+          ))}
         </div>
       );
     }

@@ -2,16 +2,18 @@ import HttpSimulators from './HttpSimulators';
 import React, { Component } from 'react';
 import SocketSimulators from './SocketSimulators';
 import connectAll from '../store/connectors/connectAll';
+import resetAll from '../actions/resetAll';
 
 class Simulators extends Component {
   render() {
-    if (this.props.simulators.length) {
+    const { dispatch, simulators } = this.props;
+    if (simulators.length) {
       return (
-        <div>
+        <div className="main">
           <h1>Simulators</h1>
           <HttpSimulators />
           <SocketSimulators />
-          <button>Reset All</button>
+          <button className="button api" onClick={() => dispatch(resetAll())}>Reset All</button>
         </div>
       );
     }

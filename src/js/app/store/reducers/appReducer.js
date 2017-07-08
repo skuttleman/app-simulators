@@ -1,6 +1,6 @@
 import {
-  RECEIVE_SOCKET_MESSAGE, SET_ACTIVE_SOCKET_CONNECTIONS,
-  SET_MESSAGE_LIST, SET_REQUEST_LIST, SET_SIMULATOR_LIST
+  RECEIVE_SOCKET_MESSAGE, SET_ACTIVE_SOCKET_CONNECTIONS, SET_MESSAGE_LIST,
+  SET_REQUEST_LIST, SET_RESPONSE, SET_SIMULATOR_LIST
 } from '../../../config/actionTypes';
 const { combineReducers } = require('redux');
 const { routerReducer: routing } = require('react-router-redux');
@@ -55,6 +55,15 @@ const requests = (state = [], { type, requests }) => {
   }
 };
 
+const response = (state = null, { type, response }) => {
+  switch (type) {
+    case SET_RESPONSE:
+      return response;
+    default:
+      return state;
+  }
+};
+
 const messages = (state = [], { type, messages }) => {
   switch (type) {
     case SET_MESSAGE_LIST:
@@ -69,6 +78,7 @@ module.exports = combineReducers({
   groupedSimulators,
   messages,
   requests,
+  response,
   routing,
   simulators,
   socketMessages

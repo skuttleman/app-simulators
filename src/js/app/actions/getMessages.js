@@ -9,8 +9,8 @@ export const setMessageList = messages => ({
   messages
 });
 
-export default (method, path) => dispatch => {
-  return fetchMessages(method, path)
+export default path => dispatch => {
+  return fetchMessages(path)
     .then(setMessageList)
     .then(dispatch);
 };

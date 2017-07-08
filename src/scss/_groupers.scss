@@ -1,0 +1,28 @@
+table {
+  padding: 0 16px;
+  margin: 4px 16px;
+  border-collapse: collapse;
+  th {
+    text-align: left;
+  }
+  td {
+    padding: 0 4px;
+  }
+  .simulator-row {
+    width: 100%;
+    .name {
+      white-space: nowrap;
+      min-width: 300px;
+    }
+    .description {
+      width: 100%;
+    }
+    .buttons {
+      min-width: 140px;
+      text-align: center;
+    }
+    &:nth-child(odd) {
+      background-color: $LIGHT-GREY;
+    }
+  }
+}

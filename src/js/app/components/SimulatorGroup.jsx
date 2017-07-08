@@ -12,12 +12,16 @@ export default class SimulatorGroup extends Component {
   render() {
     const { Simulator, name, simulators } = this.props;
     return (
-      <li>
-        <h3>{name}</h3>
-        <ul>
+      <table className="simulatorGroup">
+        <thead>
+          <tr>
+            <th><h3>{name}</h3></th>
+          </tr>
+        </thead>
+        <tbody>
           {simulators.map((simulator, key) => <Simulator key={key} {...simulator} />)}
-        </ul>
-      </li>
+        </tbody>
+      </table>
     );
   }
 }

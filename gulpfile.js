@@ -9,6 +9,7 @@ const gulp = require('gulp');
 const { ifn } = require('fun-util');
 const { noop } = require('gulp-util');
 const jasmine = require('gulp-jasmine');
+const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
 const streamify = require('gulp-streamify');
 
@@ -81,6 +82,12 @@ const jsTranspile = (config = {}) => () => {
     .pipe(gulp.dest('build/js'));
 };
 
+const sassTranspile = (config = {}) => () => {
+  return gulp.src('src/scss/main.scss')
+    .pipe(sass().on('error', errorReporter(config)))
+    .pipe(gulp.dest('build/css'));
+};
+
 srcFiles.forEach(file => {
   var taskName = toTranspile(file);
   console.log('adding task:', taskName);
@@ -103,6 +110,12 @@ gulp.task('clean:build/css', () => {
 
 gulp.task('clean', ['clean:lib', 'clean:build/js', 'clean:build/css']);
 
+gulp.task('transpile:sass', sassTranspile());
+
+gulp.task('sass:watch', ['transpile:sass'], () => {
+  gulp.watch('src/scss/**/*.scss', ['transpile:sass'])
+});
+
 gulp.task('transpile:api', () => {
   return gulp.start(srcFiles.map(toTranspile));
 });
@@ -110,10 +123,10 @@ gulp.task('transpile:api', () => {
 gulp.task('transpile:app', jsTranspile());
 
 gulp.task('transpile:all', ['clean'], () => {
-  return gulp.start(['transpile:api', 'transpile:app']);
+  return gulp.start(['transpile:api', 'transpile:app', 'transpile:sass']);
 });
 
-gulp.task('transpile:watch', ['transpile:all'], () => {
+gulp.task('transpile:watch', ['transpile:all', 'sass:watch'], () => {
   return gulp.watch(['src/**/*.js', 'src/**/*.jsx'], ['transpile:all']);
 });
 

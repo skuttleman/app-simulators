@@ -1,0 +1,14 @@
+.url, .url span, .json, code {
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+.url, .url span {
+  color: purple;
+}
+
+.json {
+  padding: 8px;
+  margin: 8px;
+  color: blue;
+  background: $LIGHT-GREY;
+}
