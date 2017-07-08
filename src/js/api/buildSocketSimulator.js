@@ -65,7 +65,7 @@ const setMainRoute = ({ app, path, settings, getState, dispatch, config }) => {
     .map(through);
   app.wsServer.getWss().on('connection', compose(...onConnection));
 
-  app.ws(simulators(path), (socket, request) => socket
+  app.ws(simulators(path), socket => socket
     .on('open', handle(onopen, socket, clients, path))
     .on('close', handle(onclose, socket, clients, path))
     .on('error', handle(onerror, socket, clients, path))
@@ -100,7 +100,6 @@ const handleMessage = ({ dispatch, echo, onmessage, socket, clients, path }) => 
     socket.send(msg);
   }
   handle(onmessage, socket, clients, path)(message);
-  // sendSocket({ from: socket.id, path, message });
 };
 
 const socketDo = (clients, path) => (data, socketId) => {

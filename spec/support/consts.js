@@ -27,8 +27,7 @@ const SIMULATORS = {
   },
   '/smart/path': {
     method: 'put',
-    status: 202,
-    response: ({ body }, response) => response.status(418).send(body),
+    respond: ({ body }) => ({ status: 418, body }),
     group: 'special',
     name: 'Smart response'
   },

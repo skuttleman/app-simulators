@@ -4,7 +4,7 @@ const { PORT = 8000 } = process.env;
 simulator({
   '/echo': {
     method: 'Patch',
-    response: ({ body }) => body
+    respond: ({ body }) => body || {}
   },
   '/test/a/:param': {
     response: { a: 'test' },

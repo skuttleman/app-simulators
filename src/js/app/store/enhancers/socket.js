@@ -1,5 +1,4 @@
 import { ifn, silent, thread } from 'fun-util';
-// import receiveMessage from '../../actions/receiveMessage';
 import setActiveConnections from '../../actions/setActiveConnections';
 import { sockets } from '../../../config/urls/api';
 
@@ -8,7 +7,6 @@ const connectSocket = dispatch => {
     .onmessage = thread(
       ({ data }) => data,
       silent(JSON.parse),
-      // ifn(({ from }) => from, receiveMessage, setActiveConnections),
       setActiveConnections,
       dispatch);
 };

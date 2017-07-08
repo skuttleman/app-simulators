@@ -11,9 +11,8 @@ const buildResettableRoutes = (builder, config, app) => {
 };
 
 const respond = handler => (request, response) => {
-  const result = handler(request, response);
-  response.status(200);
-  return result ? response.send(result) : response.end();
+  return Promise.resolve(handler(request, response))
+    .then(result => response.status(200).send(result));
 };
 
 module.exports = {

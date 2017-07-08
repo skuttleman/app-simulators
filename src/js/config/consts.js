@@ -1,7 +1,6 @@
 const DEFAULT_HTTP_SIMULATOR_SETTINGS = {
   method: 'get',
   delay: 0,
-  response: null,
   status: 200,
   headers: {},
   name: '',

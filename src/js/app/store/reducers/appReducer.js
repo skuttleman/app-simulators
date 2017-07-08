@@ -55,10 +55,37 @@ const requests = (state = [], { type, requests }) => {
   }
 };
 
-const response = (state = null, { type, response }) => {
+const body = (state = null, { type, body }) => {
   switch (type) {
     case SET_RESPONSE:
-      return response;
+      return body === undefined ? state : body;
+    default:
+      return state;
+  }
+};
+
+const delay = (state = 0, { type, delay }) => {
+  switch (type) {
+    case SET_RESPONSE:
+      return delay === undefined ? state : delay;
+    default:
+      return state;
+  }
+};
+
+const headers = (state = {}, { type, headers }) => {
+  switch (type) {
+    case SET_RESPONSE:
+      return headers === undefined ? state : headers;
+    default:
+      return state;
+  }
+};
+
+const status = (state = 200, { type, status }) => {
+  switch (type) {
+    case SET_RESPONSE:
+      return status === undefined ? state : status;
     default:
       return state;
   }
@@ -72,6 +99,8 @@ const messages = (state = [], { type, messages }) => {
       return state;
   }
 };
+
+const response = combineReducers({ body, delay, headers, status });
 
 module.exports = combineReducers({
   connectedSockets,

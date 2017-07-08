@@ -7,7 +7,7 @@ const { createStore } = require('redux');
 const httpReducer = require('./store/httpReducer');
 const { registerReset } = require('./simulatorApi');
 const { requests, response } = require('../config/urls/api');
-const { sleep } = require('fun-util');
+const { resolveThrough, sleep } = require('fun-util');
 const { simulators } = require('../config/urls/simulators');
 
 const buildHttpSimulator = (config, app) => {
@@ -31,8 +31,15 @@ const buildSimulator = (app, path, settings) => {
     dispatch({ type: CLEAR_REQUESTS });
   }));
 
-  app.put(response(method, path), respond(({ body: { response, status, delay } }) => {
-    dispatch({ type: SET_RESPONSE, response, status, delay });
+  app.get(response(method, path), respond(() => {
+    const { settings: { respond } } = getState();
+    return respond(null)
+      .catch(() => ({}))
+      .then(({ body = null, delay, headers, status }) => ({ body, delay, headers, status }));
+  }));
+
+  app.put(response(method, path), respond(({ body }) => {
+    dispatch({ type: SET_RESPONSE, ...body });
   }));
 
   app.delete(response(method, path), respond(() => {
@@ -44,10 +51,15 @@ const buildSimulator = (app, path, settings) => {
 
 const setMainRoute = ({ app, method, path, getState, dispatch }) => {
   app[method](simulators(path), (request, response) => {
-    const { settings: { delay, status, respond, headers } } = getState();
+    const { settings: { respond } } = getState();
     dispatch({ type: STORE_REQUEST, request });
-    response.status(status).set(headers);
-    sleep(delay * 1000).then(() => respond(request, response));
+    respond(request)
+      .then(result => sleep(result.delay * 1000).then(() => result))
+      .then(({ body, status, headers }) => response
+        .status(status)
+        .set(headers)
+        .send(body))
+      .catch(err => console.log(err) || response.end())
   });
 };
 

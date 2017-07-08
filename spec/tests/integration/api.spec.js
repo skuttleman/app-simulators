@@ -1,13 +1,14 @@
+const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../../../src/js/config/consts');
 const { SIMULATORS } = require('../../support/consts');
-const { forEach, map, reduce } = require('fun-util');
+const { concat, forEach, map, reduce } = require('fun-util');
 const { resetSims, sims } = require('../../helpers/simulatorHelpers');
 const runApp = require('../../support/runApp');
 
 const MAPPED_SIMS = map(SIMULATORS, sim => {
   return [].concat(sim)
     .filter(({ socket }) => !socket)
-    .map(({ method }) => method || 'get')
-    .map(method => method.toLowerCase());
+    .map(sim => concat(DEFAULT_HTTP_SIMULATOR_SETTINGS, sim))
+    .map(sim => ({ ...sim, method: (sim.method || 'get').toLowerCase() }));
 });
 
 describe('Simulator API', () => {
@@ -17,8 +18,8 @@ describe('Simulator API', () => {
     server = runApp(done);
   });
 
-  forEach(MAPPED_SIMS, (methods, path) => {
-    forEach(methods, method => {
+  forEach(MAPPED_SIMS, (simulators, path) => {
+    forEach(simulators, ({ method, response, delay, headers, status }) => {
       describe(`${method.toUpperCase()}: ${path}`, () => {
         beforeEach(done => {
           resetSims()
@@ -60,7 +61,7 @@ describe('Simulator API', () => {
           });
 
           it('only resets the requests', done => {
-            sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' } })
+            sims.put(`/api/response/${method}${path}`, { body: { updated: 'response' } })
               .then(() => sims.delete(`/api/requests/${method}${path}`))
               .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ data }) => expect(data).toEqual({ updated: 'response' }))
@@ -70,14 +71,14 @@ describe('Simulator API', () => {
 
         describe('response', () => {
           it('updates the response body', done => {
-            sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' } })
+            sims.put(`/api/response/${method}${path}`, { body: { updated: 'response' } })
               .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ data }) => expect(data).toEqual({ updated: 'response' }))
               .then(done);
           });
 
           it('updates the response status', done => {
-            sims.put(`/api/response/${method}${path}`, { status: 400, response: '' })
+            sims.put(`/api/response/${method}${path}`, { status: 400, body: '' })
               .then(() => sims[method](`/simulators${path}`, {}))
               .then(({ status }) => expect(status).toEqual(400))
               .then(done);
@@ -95,7 +96,7 @@ describe('Simulator API', () => {
 
           it('resets the response', done => {
             let before;
-            sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' }, status: 400, delay: 0.1 })
+            sims.put(`/api/response/${method}${path}`, { body: { updated: 'response' }, status: 400, delay: 0.1 })
               .then(() => sims.delete(`/api/response/${method}${path}`))
               .then(() => {
                 before = new Date;
@@ -110,12 +111,23 @@ describe('Simulator API', () => {
           });
 
           it('only resets the response', done => {
-            sims.put(`/api/response/${method}${path}`, { response: { updated: 'response' }, status: 400, delay: 0.1 })
+            sims.put(`/api/response/${method}${path}`, { body: { updated: 'response' }, status: 400, delay: 0.1 })
               .then(() => sims[method](`/simulators${path}`, {}))
               .then(() => sims.delete(`/api/response/${method}${path}`))
               .then(() => sims.get(`/api/requests/${method}${path}`))
               .then(({ data }) => expect(data).not.toEqual([]))
               .then(done);
+          });
+
+          it('gets the response details', done => {
+            sims.get(`/api/response/${method}${path}`)
+              .then(({ data }) => {
+                const expectedBody = response === undefined ? null : response;
+                expect(data.body).toEqual(expectedBody);
+                expect(data.delay).toEqual(0);
+                expect(data.headers).toEqual(headers);
+                expect(data.status).toEqual(status);
+              }).then(done);
           });
         });
       });
@@ -124,10 +136,10 @@ describe('Simulator API', () => {
 
   describe('/api/reset-all', () => {
     beforeAll(done => {
-      Promise.all(reduce(MAPPED_SIMS, (promises, methods, path) => {
-        return promises.concat(Promise.all(methods.map(method => {
+      Promise.all(reduce(MAPPED_SIMS, (promises, simulators, path) => {
+        return promises.concat(Promise.all(simulators.map(({ method }) => {
           return Promise.all([
-            sims.put(`/api/response/${method}${path}`, { response: { some: 'updated response' }, status: 401 }),
+            sims.put(`/api/response/${method}${path}`, { body: { some: 'updated response' }, status: 401 }),
             sims[method](`/simulators${path}`, {})
           ]);
         })));
@@ -135,8 +147,8 @@ describe('Simulator API', () => {
         .then(done);
     });
 
-    forEach(MAPPED_SIMS, (methods, path) => {
-      forEach(methods, method => {
+    forEach(MAPPED_SIMS, (simulators, path) => {
+      forEach(simulators, ({ method }) => {
         describe(`${method.toUpperCase()}: ${path}`, () => {
           it('has no stored requests', done => {
             sims.get(`/api/requests/${method}${path}`)
