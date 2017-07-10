@@ -1,7 +1,9 @@
 const { PORT, SIMULATORS } = require('./consts');
-const makeSimulator = require('../../src/js/simulator');
-const { readFixture } = makeSimulator;
+const createSimulators = require('../../src/js/simulator');
+const { readFixture } = createSimulators;
 
-const runApp = (done, sims = SIMULATORS) => makeSimulator(sims).listen(PORT, done);
+const runApp = (done, simulators = SIMULATORS) => {
+  return createSimulators({ simulators }).listen(PORT, done);
+};
 
 module.exports = runApp;

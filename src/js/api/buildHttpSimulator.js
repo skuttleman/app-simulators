@@ -13,11 +13,9 @@ const { simulators } = require('../config/urls/simulators');
 const buildHttpSimulator = (config, app) => {
   const reset = buildResettableRoutes(buildSimulator, config, app);
   registerReset(reset);
-
-  return app;
 };
 
-const buildSimulator = (app, path, settings) => {
+const buildSimulator = (path, settings, app) => {
   const { dispatch, getState } = createStore(httpReducer);
   const reset = () => dispatch({ type: INITIALIZE, settings });
   reset();
@@ -59,7 +57,7 @@ const setMainRoute = ({ app, method, path, getState, dispatch }) => {
         .status(status)
         .set(headers)
         .send(body))
-      .catch(err => console.log(err) || response.end())
+      .catch(() => response.end());
   });
 };
 

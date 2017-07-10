@@ -2,12 +2,12 @@ const {
   INITIALIZE, RESET_MESSAGES, STORE_MESSAGE
 } = require('../config/actionTypes');
 const { buildResettableRoutes, respond } = require('./buildSimulator');
+const { clients, messages, sockets } = require('../config/urls/api');
 const { compose, concat, filter, groupBy, map, silent, thread, through } = require('fun-util');
 const { createServer } = require('http');
 const { createStore } = require('redux');
 const { registerReset, registerSocket, sendSocket } = require('./simulatorApi');
 const { simulators } = require('../config/urls/simulators');
-const { clients, messages, sockets } = require('../config/urls/api');
 const socketReducer = require('./store/socketReducer');
 const uuid = require('uuid/v4');
 const ws = require('express-ws');
@@ -20,20 +20,22 @@ const buildSocketSimulator = (config, app) => {
   registerReset(reset);
 
   app.ws(sockets(), registerSocket);
-  app.ws('*', ws => ws.close());
+  app.ws('*', (ws, { url }) => ws.close(1000, `Unconfigured WebSocket Endpoint: ${dropUrlEnd(url)}`));
 
   return server;
 };
 
-const buildSimulator = config => (app, path, settings) => {
+const buildSimulator = config => (path, settings, app) => {
   const { dispatch, getState } = createStore(socketReducer);
   const reset = () => dispatch({ type: INITIALIZE, settings });
   reset();
 
   setMainRoute({ app, path, settings, getState, dispatch, config });
 
-  app.get(messages(path), respond(() => {
-    return getState().messages;
+  app.get(messages(path), respond(() => getState().messages));
+
+  app.post(messages(path), respond(({ body, query: { to } }) => {
+    send(app.wsServer.getWss().clients, path, body, to);
   }));
 
   app.delete(messages(path), respond(() => {
@@ -42,10 +44,6 @@ const buildSimulator = config => (app, path, settings) => {
 
   app.get(clients(path), respond(() => {
     return getClientIds(app.wsServer.getWss().clients, path);
-  }));
-
-  app.post(messages(path), respond(({ body, query: { to } }) => {
-    send(app.wsServer.getWss().clients, path, body, to);
   }));
 
   return reset;
@@ -59,27 +57,31 @@ const send = (clients, path, body, filterId) => {
 };
 
 const setMainRoute = ({ app, path, settings, getState, dispatch, config }) => {
-  const { echo, onmessage, onclose, onerror, onopen } = settings;
+  const { echo, onmessage, onclose, onopen } = settings;
   const clients = app.wsServer.getWss().clients;
-  onConnection = [addCloseHandler(clients, config), updateApiSockets(clients, config), assignId]
-    .map(through);
+  onConnection = [
+      addOpenHandler(onopen, clients, path),
+      addCloseHandler(clients, config),
+      updateApiSockets(clients, config),
+      assignId
+    ].map(through);
   app.wsServer.getWss().on('connection', compose(...onConnection));
-
   app.ws(simulators(path), socket => socket
-    .on('open', handle(onopen, socket, clients, path))
     .on('close', handle(onclose, socket, clients, path))
-    .on('error', handle(onerror, socket, clients, path))
     .on('message', handleMessage({ dispatch, echo, onmessage, socket, clients, path })));
 };
 
 const assignId = socket => socket.id = uuid();
 
+const addOpenHandler = (onopen, clients, path) => socket => {
+  handle(onopen, socket, clients, path)(socket.id);
+};
+
 const updateApiSockets = (clients, config) => thread(
   () => clients,
   Array.from,
-  clients => groupBy(clients, ({ upgradeReq }) => upgradeReq.url.replace('/.websocket', '')),
+  clients => groupBy(clients, ({ upgradeReq }) => dropUrlEnd(upgradeReq.url)),
   clients => map(config, (_, path) => clients[simulators(path)] || []),
-  clients => filter(clients, (_, url) => url !== sockets()),
   clients => map(clients, mapToClientIds),
   sendSocket);
 
@@ -109,17 +111,19 @@ const socketDo = (clients, path) => (data, socketId) => {
 const filterClientsByPath = (clients, path) => {
   return Array.from(clients)
     .filter(({ upgradeReq }) => {
-      const url = upgradeReq.url.replace('/.websocket', '');
+      const url = dropUrlEnd(upgradeReq.url);
       return url === path || url === simulators(path);
     });
 };
 
 const getClientIds = (clients, path) => {
-  return mapToClientIds(filterClientsByPath(clients, path));
+  return mapToClientIds(Array.from(clients));
 };
 
 const mapToClientIds = clients => {
   return Array.from(clients).map(({ id }) => id);
 };
+
+const dropUrlEnd = url => url.replace('/.websocket', '');
 
 module.exports = buildSocketSimulator;

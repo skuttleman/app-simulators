@@ -20,16 +20,16 @@ const getSimList = config => {
   }, []);
 };
 
-const setupMiddleware = (app, config) => {
+const setupMiddleware = (config, app) => {
   const sims = getSimList(config);
   app.use(cors());
   app.use(bodyParser.json());
 
-  app.delete(resetAll(), respond(() => resetSimulators()));
+  app.delete(resetAll(), respond(() => {
+    resetSimulators();
+  }));
 
   app.get(simulators(), respond(() => sims));
-
-  return app;
 };
 
 module.exports = setupMiddleware;

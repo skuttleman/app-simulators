@@ -5,7 +5,7 @@ const noop = () => null;
 const buildResettableRoutes = (builder, config, app) => {
   return reduce(config, (reset, settings, path) => {
     return compose(reset, reduce([].concat(settings), (reset, routeSettings) => {
-      return compose(reset, builder(app, path, routeSettings));
+      return compose(reset, builder(path, routeSettings, app));
     }, noop));
   }, noop);
 };

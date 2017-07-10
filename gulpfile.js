@@ -68,7 +68,12 @@ const testError = exit => function (err) {
 
 const test = exit => () => {
   return gulp.src('spec/**/*.js')
-    .pipe(jasmine().on('error', testError(exit)));
+    .pipe(jasmine({
+      config: {
+        stopSpecOnExpectationFailure: false,
+        random: true
+      }
+    }).on('error', testError(exit)));
 };
 
 let srcFiles = glob.sync(`${__dirname}/src/**/*.js`, { ignore: `${__dirname}/src/js/app/**/*.js` });

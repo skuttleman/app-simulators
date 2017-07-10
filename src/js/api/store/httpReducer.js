@@ -29,8 +29,10 @@ const updateSettings = (...settings) => {
 };
 
 const respond = ({ body, status, delay, headers, respond }) => {
-  const response = { body, status, delay, headers };
-  return request => Promise.resolve().then(() => respond ? respond(request) : response).catch(identity);
+  const response = () => ({ body, status, delay, headers });
+  return request => Promise.resolve(request)
+    .then(respond || response)
+    .catch(response);
 };
 
 const requests = (state = [], { type, request }) => {

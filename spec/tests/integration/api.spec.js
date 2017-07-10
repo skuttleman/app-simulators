@@ -1,6 +1,6 @@
 const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../../../src/js/config/consts');
 const { SIMULATORS } = require('../../support/consts');
-const { concat, forEach, map, reduce } = require('fun-util');
+const { concat, forEach, map, reduce, sleep } = require('fun-util');
 const { resetSims, sims } = require('../../helpers/simulatorHelpers');
 const runApp = require('../../support/runApp');
 
@@ -143,8 +143,11 @@ describe('Simulator API', () => {
             sims[method](`/simulators${path}`, {})
           ]);
         })));
-      }, [])).then(() => sims.delete('/api/reset-all'))
-        .then(done);
+      }, [])).then(done);
+    });
+
+    beforeEach(done => {
+      sims.delete('/api/reset-all').then(done);
     });
 
     forEach(MAPPED_SIMS, (simulators, path) => {
