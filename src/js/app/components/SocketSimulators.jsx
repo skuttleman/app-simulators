@@ -10,7 +10,7 @@ class SocketSimulators extends Component {
     if (groups.length) {
       return (
         <div className="simulators socketSimulators">
-          <h2>Socket Simulators</h2>
+          <h2>WebSocket Simulators</h2>
           {groups.map((group, key) => (
             SimulatorGroup.group(SocketSimulator, simulators[group], group, key)
           ))}

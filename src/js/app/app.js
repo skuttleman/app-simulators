@@ -5,7 +5,7 @@ import Messages from './components/Messages';
 import Requests from './components/Requests';
 import Simulators from './components/Simulators';
 import Update from './components/Update';
-import appReducer from './store/reducers/appReducer';
+import appReducer from './store/reducers';
 import { applyMiddleware, createStore } from 'redux';
 import { browserHistory, Router, Route, IndexRoute } from 'react-router';
 import { compose } from 'fun-util';

@@ -10,7 +10,7 @@ class HttpSimulators extends Component {
     if (groups.length) {
       return (
         <div className="simulators httpSimulators">
-          <h2>Http Simulators</h2>
+          <h2>HTTP Simulators</h2>
           {groups.map((group, key) => (
             SimulatorGroup.group(HttpSimulator, simulators[group], group, key)
           ))}

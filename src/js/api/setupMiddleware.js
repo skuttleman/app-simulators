@@ -2,6 +2,7 @@ const { DEFAULT_HTTP_SIMULATOR_SETTINGS } = require('../config/consts');
 const bodyParser = require('body-parser');
 const { concat, reduce, type } = require('fun-util');
 const cors = require('cors');
+const logger = require('./middleware/logger');
 const { resetAll, simulators } = require('../config/urls/api');
 const { resetSimulators } = require('./simulatorApi');
 const { respond } = require('./buildSimulator');
@@ -24,6 +25,7 @@ const setupMiddleware = (config, app) => {
   const sims = getSimList(config);
   app.use(cors());
   app.use(bodyParser.json());
+  app.use(logger());
 
   app.delete(resetAll(), respond(() => {
     resetSimulators();
