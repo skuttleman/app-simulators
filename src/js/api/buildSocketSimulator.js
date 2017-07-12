@@ -3,7 +3,7 @@ const {
 } = require('../config/actionTypes');
 const { buildResettableRoutes, respond } = require('./buildSimulator');
 const { clients, messages, sockets } = require('../config/urls/api');
-const { compose, concat, filter, groupBy, map, silent, thread, through } = require('fun-util');
+const { compose, groupBy, map, partial, silent, thread, through } = require('fun-util');
 const { createServer } = require('http');
 const { createStore } = require('redux');
 const { registerReset, registerSocket, sendSocket } = require('./simulatorApi');
@@ -20,7 +20,7 @@ const buildSocketSimulator = (config, app) => {
   registerReset(reset);
 
   app.ws(sockets(), registerSocket);
-  app.ws('*', (ws, { url }) => ws.close(1000, `Unconfigured WebSocket Endpoint: ${dropUrlEnd(url)}`));
+  app.ws('*', (ws, { url }) => ws.close(1000, `Unknown WebSocket URL: ${dropUrlEnd(url)}`));
 
   return server;
 };
@@ -35,7 +35,7 @@ const buildSimulator = config => (path, settings, app) => {
   app.get(messages(path), respond(() => getState().messages));
 
   app.post(messages(path), respond(({ body, query: { to } }) => {
-    send(app.wsServer.getWss().clients, path, body, to);
+    send(getClients(app), path, body, to);
   }));
 
   app.delete(messages(path), respond(() => {
@@ -43,7 +43,7 @@ const buildSimulator = config => (path, settings, app) => {
   }));
 
   app.get(clients(path), respond(() => {
-    return getClientIds(app.wsServer.getWss().clients, path);
+    return getClientIds(getClients(app), path);
   }));
 
   return reset;
@@ -58,8 +58,9 @@ const send = (clients, path, body, filterId) => {
 
 const setMainRoute = ({ app, path, settings, getState, dispatch, config }) => {
   const { echo, onmessage, onclose, onopen } = settings;
-  const clients = app.wsServer.getWss().clients;
+  const clients = getClients(app);
   onConnection = [
+      logConnect,
       addOpenHandler(onopen, clients, path),
       addCloseHandler(clients, config),
       updateApiSockets(clients, config),
@@ -68,8 +69,13 @@ const setMainRoute = ({ app, path, settings, getState, dispatch, config }) => {
   app.wsServer.getWss().on('connection', compose(...onConnection));
   app.ws(simulators(path), socket => socket
     .on('close', handle(onclose, socket, clients, path))
+    .on('close', partial(logDisconnect, socket))
     .on('message', handleMessage({ dispatch, echo, onmessage, socket, clients, path })));
 };
+
+const logConnect = socket => console.log('WebSocket connected:', socket.id);
+
+const logDisconnect = socket => console.log('WebSocket disconnected:', socket.id);
 
 const assignId = socket => socket.id = uuid();
 
@@ -108,6 +114,10 @@ const socketDo = (clients, path) => (data, socketId) => {
   send(clients, path, data, socketId);
 };
 
+const getClientIds = (clients, path) => {
+  return mapToClientIds(filterClientsByPath(clients, path));
+};
+
 const filterClientsByPath = (clients, path) => {
   return Array.from(clients)
     .filter(({ upgradeReq }) => {
@@ -116,13 +126,11 @@ const filterClientsByPath = (clients, path) => {
     });
 };
 
-const getClientIds = (clients, path) => {
-  return mapToClientIds(Array.from(clients));
-};
-
 const mapToClientIds = clients => {
   return Array.from(clients).map(({ id }) => id);
 };
+
+const getClients = app => app.wsServer.getWss().clients;
 
 const dropUrlEnd = url => url.replace('/.websocket', '');
 

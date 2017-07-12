@@ -11,9 +11,9 @@ describe('Socket API', () => {
     beforeEach(done => {
       messageReceived = new Promise(resolve => {
         server = runApp(() => {
-            socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
-            socket.onopen = done;
-          }, {
+          socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
+          socket.onopen = done;
+        }, {
             '/socket': {
               socket: true,
               onmessage: (ws, message) => resolve({ message, ws })
@@ -59,9 +59,9 @@ describe('Socket API', () => {
     beforeEach(done => {
       messageReceived = new Promise(resolve => {
         server = runApp(() => {
-            socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
-            socket.onopen = done;
-          }, {
+          socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
+          socket.onopen = done;
+        }, {
             '/socket': {
               socket: true,
               onmessage: (_, message, cb) => resolve({ cb, message })
@@ -215,10 +215,10 @@ describe('Socket API', () => {
     beforeAll(done => {
       onmessage = jasmine.createSpy('onmessage');
       server = runApp(() => {
-          socket = new WebSocket(`ws://localhost:${PORT}/api/sockets`);
-          socket.onmessage = onmessage;
-          socket.onopen = done;
-        }, {
+        socket = new WebSocket(`ws://localhost:${PORT}/api/sockets`);
+        socket.onmessage = onmessage;
+        socket.onopen = done;
+      }, {
           '/socket': {
             socket: true
           }
@@ -292,9 +292,9 @@ describe('Socket API', () => {
 
     beforeAll(done => {
       server = runApp(() => Promise.all([
-          connect('/socket1').then(socket => socket1 = socket),
-          connect('/socket2').then(socket => socket2 = socket)
-        ]).then(done), {
+        connect('/socket1').then(socket => socket1 = socket),
+        connect('/socket2').then(socket => socket2 = socket)
+      ]).then(done), {
           '/socket1': {
             socket: true
           },
@@ -328,6 +328,18 @@ describe('Socket API', () => {
         }).then(done);
     });
 
+    it('only sends ids for sockets connected to the requested socket url', done => {
+      Promise.all([
+        sims.get('/api/clients/socket1'),
+        sims.get('/api/clients/socket2')
+      ]).then(([{ data: ids1 }, { data: ids2 }]) => {
+        expect(ids1.length).toEqual(1);
+        expect(ids1[0]).toMatch(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/);
+        expect(ids2.length).toEqual(1);
+        expect(ids2[0]).toMatch(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/);
+      }).then(done);
+    })
+
     afterAll(done => {
       socket1.close();
       socket2.close();
@@ -345,12 +357,12 @@ describe('Socket API', () => {
         socket = new WebSocket(`ws://localhost:${PORT}/simulators/socket`);
         socket.onopen = done;
       }, {
-        '/socket': {
-          socket: true,
-          onopen,
-          onclose
-        }
-      });
+          '/socket': {
+            socket: true,
+            onopen,
+            onclose
+          }
+        });
     });
 
     it('calls onopen handler', done => {
