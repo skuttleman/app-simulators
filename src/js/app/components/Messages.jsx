@@ -16,7 +16,7 @@ class Messages extends Component {
     return (
       <div className="stored messages">
         <h1>Messages</h1>
-        <div className="url">WS: {path}</div>
+        <div className="url"><span className="protocol">WS:</span> {path}</div>
         <div className="json"><pre><code>{messages}</code></pre></div>
       </div>
     );

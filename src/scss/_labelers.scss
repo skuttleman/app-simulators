@@ -4,6 +4,10 @@
 
 .url, .url span {
   color: purple;
+  .method, .protocol {
+    font-weight: bold;
+    font-style: italic;
+  }
 }
 
 .json {

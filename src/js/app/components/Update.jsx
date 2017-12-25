@@ -24,7 +24,7 @@ class Update extends Component {
     return (
       <div>
         <h1>Update Response</h1>
-        <p className="url">{method}: {path}</p>
+        <p className="url"><span className="method">{method}:</span> {path}</p>
         <form onSubmit={event => event.preventDefault()}>
           <fieldset>
             <label>Body:</label>

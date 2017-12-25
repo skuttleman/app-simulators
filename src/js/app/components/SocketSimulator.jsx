@@ -12,28 +12,36 @@ class SocketSimulator extends Component {
       <tr className="simulator-row socketSimulator-row">
         <td className="name">
           <h4>{name}</h4>
-          <div className="url">WS: {simulators(path)}</div>
+          <div className="url"><span className="protocol">WS:</span> {simulators(path)}</div>
         </td>
         <td className="description">
           <p>{description}</p>
           {sockets.length ? <p>Connections:</p> : null}
           <ul>
-            {sockets.map((id, key) => <li key={key}>
-              <span className="url">Connection-{key}: </span>
-              <button className="button inlineForm">Send Message</button>
-            </li>)}
+            {sockets.map((id, key) => {
+              const onPrimary = body => dispatch(sendMessage(path, body, id));
+              const onClick = () => dispatch(showModal({ onPrimary, title: 'Send WebSocket Message'}));
+              return (
+                <li key={`connection-${id}`}>
+                  <span className="url">Connection-{key}: </span>
+                  <button className="btn btn-info" data={{toggle: 'modal', target:'#modal'}} onClick={onClick}>
+                    Send Message
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </td>
         <td className="buttons">
-          <button className="button goToView" onClick={() => browserHistory.push(messages(path))}>
+          <button className="btn btn-primary" onClick={() => browserHistory.push(messages(path))}>
             View Messages
           </button>
-          <button className="button api" onClick={() => dispatch(clearMessages(path))}>
+          <button className="btn btn-danger" onClick={() => dispatch(clearMessages(path))}>
             Clear Messsages
           </button>
         </td>
         <td className="buttons">
-          <button className="button inlineForm">Broadcast Message</button>
+          <button className="btn btn-info">Broadcast Message</button>
         </td>
       </tr>
     );

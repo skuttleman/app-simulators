@@ -9,11 +9,11 @@ class Simulators extends Component {
     const { dispatch, simulators } = this.props;
     if (simulators.length) {
       return (
-        <div className="main">
+        <div>
           <h1>Simulators</h1>
           <HttpSimulators />
           <SocketSimulators />
-          <button className="button api" onClick={() => dispatch(resetAll())}>Reset All</button>
+          <button className="btn btn-danger" onClick={() => dispatch(resetAll())}>Reset All</button>
         </div>
       );
     }

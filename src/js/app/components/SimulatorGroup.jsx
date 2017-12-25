@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 
 export default class SimulatorGroup extends Component {
-  static group(Simulator, simulators, name, key) {
+  static group(Simulator, simulators, name) {
     return <SimulatorGroup
       Simulator={Simulator}
-      key={key}
       name={name}
       simulators={simulators} />;
   }
@@ -12,14 +11,14 @@ export default class SimulatorGroup extends Component {
   render() {
     const { Simulator, name, simulators } = this.props;
     return (
-      <table className="simulatorGroup">
+      <table className="table table-striped">
         <thead>
           <tr>
             <th><h3>{name}</h3></th>
           </tr>
         </thead>
         <tbody>
-          {simulators.map((simulator, key) => <Simulator key={key} {...simulator} />)}
+          {simulators.map((simulator, key) => <Simulator key={`${name}-${key}`} {...simulator} />)}
         </tbody>
       </table>
     );

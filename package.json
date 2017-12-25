@@ -54,5 +54,16 @@
     "selenium-webdriver": "^3.4.0",
     "vinyl-source-stream": "^1.1.0",
     "ws": "^2.3.1"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skuttleman/app-simulators.git"
+  },
+  "bugs": {
+    "url": "https://github.com/skuttleman/app-simulators/issues"
+  },
+  "homepage": "https://github.com/skuttleman/app-simulators#readme"
 }

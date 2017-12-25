@@ -16,7 +16,7 @@ class Requests extends Component {
     return (
       <div className="stored requests">
         <h1>Requests</h1>
-        <div className="url">{method}: {path}</div>
+        <div className="url"><span className="method">{method}:</span> {path}</div>
         <div className="json"><pre><code>{requests}</code></pre></div>
       </div>
     );

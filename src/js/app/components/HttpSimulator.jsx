@@ -10,25 +10,25 @@ class HttpSimulator extends Component {
   render() {
     const { description, dispatch, method, name, path } = this.props;
     return (
-      <tr className="simulator-row httpSimulator-row">
+      <tr>
         <td className="name">
           <h4>{name}</h4>
-          <div className="url">{method}: {simulators(path)}</div>
+          <div className="url"><span className="method">{method}:</span> {simulators(path)}</div>
         </td>
         <td className="description"><p>{description}</p></td>
         <td className="buttons">
-          <button className="button goToView" onClick={() => browserHistory.push(requests(method, path))}>
+          <button className="btn btn-primary" onClick={() => browserHistory.push(requests(method, path))}>
             View Requests
             </button>
-          <button className="button api" onClick={() => dispatch(clearRequests(method, path))}>
+          <button className="btn btn-danger" onClick={() => dispatch(clearRequests(method, path))}>
             Clear Requests
           </button>
         </td>
         <td className="buttons">
-          <button className="button goToView" onClick={() => browserHistory.push(update(method, path))}>
+          <button className="btn btn-warning" onClick={() => browserHistory.push(update(method, path))}>
             Update Response
           </button>
-          <button className="button api" onClick={() => dispatch(resetResponse(method, path))}>
+          <button className="btn btn-danger" onClick={() => dispatch(resetResponse(method, path))}>
             Reset Response
           </button>
         </td>

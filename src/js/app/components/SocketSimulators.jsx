@@ -9,10 +9,12 @@ class SocketSimulators extends Component {
     const groups = Object.keys(simulators);
     if (groups.length) {
       return (
-        <div className="simulators socketSimulators">
+        <div>
           <h2>WebSocket Simulators</h2>
           {groups.map((group, key) => (
-            SimulatorGroup.group(SocketSimulator, simulators[group], group, key)
+            <div key={`ws-${key}`} className="row">
+              {SimulatorGroup.group(SocketSimulator, simulators[group], group)}
+            </div>
           ))}
         </div>
       );

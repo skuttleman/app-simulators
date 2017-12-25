@@ -9,10 +9,12 @@ class HttpSimulators extends Component {
     const groups = Object.keys(simulators);
     if (groups.length) {
       return (
-        <div className="simulators httpSimulators">
+        <div>
           <h2>HTTP Simulators</h2>
           {groups.map((group, key) => (
-            SimulatorGroup.group(HttpSimulator, simulators[group], group, key)
+            <div key={`http-${key}`} className="row">
+              {SimulatorGroup.group(HttpSimulator, simulators[group], group)}
+            </div>
           ))}
         </div>
       );
