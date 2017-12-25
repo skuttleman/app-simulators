@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 import clearMessages from '../actions/clearMessages';
+import { showModal } from '../actions/modal';
+import sendMessage from '../actions/sendMessage';
 import connectSimulator from '../store/connectors/connectSimulator';
 import { messages } from '../../config/urls/views';
 import { simulators } from '../../config/urls/simulators';

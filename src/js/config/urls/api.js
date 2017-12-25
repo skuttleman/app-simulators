@@ -1,6 +1,6 @@
 const clients = path => `/api/clients${path}`;
 
-const messages = path => `/api/messages${path}`;
+const messages = (path, to) => `/api/messages${path}${to ? `?to=${to}` : ''}`;
 
 const requests = (method, path) => `/api/requests/${method.toLowerCase()}${path}`;
 
