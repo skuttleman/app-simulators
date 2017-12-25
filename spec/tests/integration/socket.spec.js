@@ -117,7 +117,7 @@ describe('Socket API', () => {
     });
 
     it('sends a message', done => {
-      sims.post('/api/messages/socket', { message: 'message' });
+      sims.post('/api/messages/socket', { message: { message: 'message' } });
       new Promise(resolve => {
         socket.onmessage = ({ data }) => resolve(data);
       }).then(JSON.parse)
@@ -150,7 +150,7 @@ describe('Socket API', () => {
       });
 
       it('broadcasts a message to all clients', done => {
-        sims.post('/api/messages/socket', { message: 'message' });
+        sims.post('/api/messages/socket', { message: { message: 'message' } });
         Promise.all([
           new Promise(resolve => socket.onmessage = ({ data }) => resolve(data)),
           new Promise(resolve => socket2.onmessage = ({ data }) => resolve(data)),
@@ -168,8 +168,8 @@ describe('Socket API', () => {
         socket2.onmessage = ({ data }) => socket2Spy(JSON.parse(data));
 
         Promise.all([
-          sims.post(`/api/messages/socket?to=${ids[0]}`, { message: 'message1' }),
-          sims.post(`/api/messages/socket?to=${ids[1]}`, { message: 'message2' })
+          sims.post(`/api/messages/socket?to=${ids[0]}`, { message: { message: 'message1' } }),
+          sims.post(`/api/messages/socket?to=${ids[1]}`, { message: { message: 'message2' } })
         ]).then(() => sleep(200))
           .then(() => {
             expect(socket1Spy).toHaveBeenCalledTimes(1);
@@ -309,7 +309,7 @@ describe('Socket API', () => {
       socket1.onmessage = ({ data }) => messages1.push(JSON.parse(data));
       socket2.onmessage = ({ data }) => messages2.push(JSON.parse(data));
 
-      sims.post('/api/messages/socket1', { some: 'message' })
+      sims.post('/api/messages/socket1', { message: { some: 'message' }})
         .then(() => {
           expect(messages1).toEqual([{ some: 'message' }]);
           expect(messages2).toEqual([]);
@@ -321,7 +321,7 @@ describe('Socket API', () => {
       socket1.onmessage = ({ data }) => messages1.push(JSON.parse(data));
       socket2.onmessage = ({ data }) => messages2.push(JSON.parse(data));
 
-      sims.post('/api/messages/socket2', { some: 'message' })
+      sims.post('/api/messages/socket2', { message: { some: 'message' } })
         .then(() => {
           expect(messages1).toEqual([]);
           expect(messages2).toEqual([{ some: 'message' }]);

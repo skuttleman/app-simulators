@@ -184,7 +184,7 @@ Returns the socket messages received.
 
 #### POST /api/messages/<PATH>?to=<SOCKETID>
 
-Send the post body as a socket message to the specified socket ID. If the `to` parameter is not included, the message is broadcast to all active connections for the given <PATH>.
+Send the post body as a socket message to the specified socket ID. If the `to` parameter is not included, the message is broadcast to all active connections for the given <PATH>. The message to be sent should be nested in the `message` key on the body.
 
 #### DELETE /api/messages/<PATH>
 
