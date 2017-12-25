@@ -272,7 +272,7 @@ describe('Socket API', () => {
 
     it('disconnects the socket', done => {
       socket.onclose = ({ reason }) => {
-        expect(reason).toEqual('Unconfigured WebSocket Endpoint: /simulators/socket');
+        expect(reason).toEqual('Unconfigured WebSocket URL: /simulators/socket');
         done();
       };
     });

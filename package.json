@@ -51,6 +51,7 @@
     "jasmine": "^2.6.0",
     "jasmine-spec-reporter": "^2.7.0",
     "proxyquire": "^1.7.11",
+    "selenium-webdriver": "^3.4.0",
     "vinyl-source-stream": "^1.1.0",
     "ws": "^2.3.1"
   }

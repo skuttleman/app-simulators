@@ -20,7 +20,7 @@ const buildSocketSimulator = (config, app) => {
   registerReset(reset);
 
   app.ws(sockets(), registerSocket);
-  app.ws('*', (ws, { url }) => ws.close(1000, `Unknown WebSocket URL: ${dropUrlEnd(url)}`));
+  app.ws('*', (ws, { url }) => ws.close(1000, `Unconfigured WebSocket URL: ${dropUrlEnd(url)}`));
 
   return server;
 };
