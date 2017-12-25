@@ -5,7 +5,7 @@ createSimulators({
   simulators: {
     '/echo': {
       method: 'Patch',
-      respond: ({ body }) => body || {}
+      respond: ({ body }) => ({ body: body || {}})
     },
     '/test/a/:param': {
       response: { a: 'test' },
