@@ -10,6 +10,8 @@ import { simulators } from '../../config/urls/simulators';
 class SocketSimulator extends Component {
   render() {
     const { description, dispatch, name, path, sockets } = this.props;
+    const onPrimary = body => dispatch(sendMessage(path, body));
+    const openBroadcast = () => dispatch(showModal({ onPrimary, title: 'Broadcast WebSocket Message'}));
     return (
       <tr className="simulator-row socketSimulator-row">
         <td className="name">
@@ -20,13 +22,13 @@ class SocketSimulator extends Component {
           <p>{description}</p>
           {sockets.length ? <p>Connections:</p> : null}
           <ul>
-            {sockets.map((id, key) => {
+            {sockets.map(id => {
               const onPrimary = body => dispatch(sendMessage(path, body, id));
               const onClick = () => dispatch(showModal({ onPrimary, title: 'Send WebSocket Message'}));
               return (
                 <li key={`connection-${id}`}>
-                  <span className="url">Connection-{key}: </span>
-                  <button className="btn btn-info" data={{toggle: 'modal', target:'#modal'}} onClick={onClick}>
+                  <span className="url">{id}: </span>
+                  <button className="btn btn-info" onClick={onClick}>
                     Send Message
                   </button>
                 </li>
@@ -43,7 +45,9 @@ class SocketSimulator extends Component {
           </button>
         </td>
         <td className="buttons">
-          <button className="btn btn-info">Broadcast Message</button>
+          <button className={`btn btn-info${!sockets.length ? ' disabled' : ''}`} disabled={!sockets.length} onClick={openBroadcast}>
+            Broadcast
+          </button>
         </td>
       </tr>
     );

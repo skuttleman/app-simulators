@@ -13,7 +13,9 @@ class Simulators extends Component {
           <h1>Simulators</h1>
           <HttpSimulators />
           <SocketSimulators />
-          <button className="btn btn-danger" onClick={() => dispatch(resetAll())}>Reset All</button>
+          <div className="button-container">
+            <button className="btn btn-danger" onClick={() => dispatch(resetAll())}>Reset All</button>
+          </div>
         </div>
       );
     }

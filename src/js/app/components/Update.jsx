@@ -26,29 +26,29 @@ class Update extends Component {
         <h1>Update Response</h1>
         <p className="url"><span className="method">{method}:</span> {path}</p>
         <form onSubmit={event => event.preventDefault()}>
-          <fieldset>
+          <fieldset className="form-group">
             <label>Body:</label>
             <JSONEditor autoFocus={true} value={pretty(response.body)} onChange={compose(onChange, into('body'))} />
-            <button className="button inlineForm" onClick={reFormat('body')}>Re-Format</button>
+            <button className="btn btn-info" onClick={reFormat('body')}>Re-Format</button>
           </fieldset>
-          <fieldset>
+          <fieldset className="form-group">
             <label>Status:</label>
-            <input type="number" value={response.status} onChange={compose(onChange, into('status'), handleOnChange)} />
+            <input className="form-control" type="number" value={response.status} onChange={compose(onChange, into('status'), handleOnChange)} />
           </fieldset>
-          <fieldset>
-            <label>Delay:</label>
-            <input type="number" value={response.delay} onChange={compose(onChange, into('delay'), handleOnChange)} />
+          <fieldset className="form-group">
+            <label>Delay (in seconds):</label>
+            <input className="form-control" type="number" value={response.delay} onChange={compose(onChange, into('delay'), handleOnChange)} />
           </fieldset>
-          <fieldset>
+          <fieldset className="form-group">
             <label>Headers:</label>
             <JSONEditor value={pretty(response.headers)} onChange={compose(onChange, into('headers'))} />
-            <button className="button inlineForm" onClick={reFormat('headers')}>Re-Format</button>
+            <button className="btn btn-info" onClick={reFormat('headers')}>Re-Format</button>
           </fieldset>
-          <div className="buttons">
-            <button className="button goToView" onClick={() => this._updateResponse()}>
+          <div className="button-container">
+            <button className="btn btn-primary" onClick={() => this._updateResponse()}>
               Update Response
             </button>
-            <button className="button api" onClick={() => browserHistory.goBack()}>Cancel</button>
+            <button className="btn btn-secondary" onClick={() => browserHistory.goBack()}>Cancel</button>
           </div>
         </form>
       </div>

@@ -35,7 +35,7 @@ const buildSimulator = config => (path, settings, app) => {
   app.get(messages(path), respond(() => getState().messages));
 
   app.post(messages(path), respond(({ body, query: { to } }) => {
-    send(getClients(app), path, body, to);
+    send(getClients(app), path, body.message, to);
   }));
 
   app.delete(messages(path), respond(() => {
