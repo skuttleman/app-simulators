@@ -6,10 +6,10 @@ const { readFileSync } = require('fs');
 const setupMiddleware = require('./api/setupMiddleware');
 const setupStatic = require('./api/setupStatic');
 
-const createSimulators = ({ simulators }) => {
-  const { socket = {}, http = {} } = groupBy(simulators, ({ socket }) => socket ? 'socket' : 'http');
+const createSimulators = config => {
+  const { socket = {}, http = {} } = groupBy(config.simulators, ({ socket }) => socket ? 'socket' : 'http');
   const app = express();
-  setupMiddleware(simulators, app);
+  setupMiddleware(config, app);
   buildHttpSimulator(http, app);
   const server = buildSocketSimulator(socket, app);
   setupStatic(app);

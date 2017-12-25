@@ -22,10 +22,12 @@ const getSimList = config => {
 };
 
 const setupMiddleware = (config, app) => {
-  const sims = getSimList(config);
+  const sims = getSimList(config.simulators);
   app.use(cors());
   app.use(bodyParser.json());
-  app.use(logger());
+  if (!config.noLogger) {
+    app.use(logger());
+  }
 
   app.delete(resetAll(), respond(() => {
     resetSimulators();

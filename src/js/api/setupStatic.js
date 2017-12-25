@@ -5,7 +5,7 @@ const { join } = require('path');
 const { respond } = require('./buildSimulator');
 
 const setupStatic = app => {
-  app.use(express.static('build'));
+  app.use(express.static(join(__dirname, '../../../build')));
   app.get('*', (_, response) => {
     response.sendFile(join(__dirname, '../../../build/index.html'));
   });
