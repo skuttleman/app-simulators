@@ -13,7 +13,7 @@ class SocketSimulator extends Component {
     const onPrimary = body => dispatch(sendMessage(path, body));
     const openBroadcast = () => dispatch(showModal({ onPrimary, title: 'Broadcast WebSocket Message'}));
     return (
-      <tr className="simulator-row socketSimulator-row">
+      <tr className={`ws-sim url${path.split('/').join('--')}`}>
         <td className="name">
           <h4>{name}</h4>
           <div className="url"><span className="protocol">WS:</span> {simulators(path)}</div>

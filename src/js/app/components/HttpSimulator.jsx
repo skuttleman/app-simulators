@@ -10,7 +10,7 @@ class HttpSimulator extends Component {
   render() {
     const { description, dispatch, method, name, path } = this.props;
     return (
-      <tr>
+      <tr className={`http-sim method-${method.toLowerCase()} url${path.split('/').join('--')}`}>
         <td className="name">
           <h4>{name}</h4>
           <div className="url"><span className="method">{method}:</span> {simulators(path)}</div>

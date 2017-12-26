@@ -11,7 +11,7 @@ export default class SimulatorGroup extends Component {
   render() {
     const { Simulator, name, simulators } = this.props;
     return (
-      <table className="table table-striped">
+      <table className={`table table-striped sim-group-${name.toLowerCase().replace(/[^A-z]/, '-')}`}>
         <thead>
           <tr>
             <th><h3>{name}</h3></th>
