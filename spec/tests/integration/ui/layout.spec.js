@@ -1,6 +1,7 @@
+const { BROWSERS } = require('../../../support/consts');
+const { DriverAPI, getInnerText, selectElement, withDriver, within } = require('../../../support/selenium');
 const { compose, first, forEach, rest, sleep } = require('fun-util');
 const runApp = require('../../../support/runApp');
-const { DriverAPI, selectElement, getInnerText, withDriver, within } = require('../../../support/selenium');
 
 const SIMULATORS = {
   '/test': {
@@ -36,21 +37,21 @@ const SIMULATORS = {
   }
 };
 
-describe('UI Spec', () => {
-  forEach(['chrome', 'firefox'], browser => {
-    describe(`With browser: ${browser.toUpperCase()}`, () => {
-      let driver, server;
+forEach(BROWSERS, browser => {
+  describe(`With browser: ${browser.toUpperCase()}`, () => {
+    let driver, server;
 
-      beforeAll(done => {
-        server = runApp(() => {
-          driver = DriverAPI.factory(browser);
-          done();
-        }, SIMULATORS);
-      });
+    beforeAll(done => {
+      server = runApp(() => {
+        driver = DriverAPI.factory(browser);
+        driver.visitHome().then(done);
+      }, SIMULATORS);
+    });
 
+    describe('UI/Layout Spec', () => {
       describe('Main page', () => {
         beforeEach(done => {
-          driver.get('http://localhost:8000').then(done);
+          driver.visitHome().then(done);
         });
 
         it('has a title', done => {
@@ -110,10 +111,10 @@ describe('UI Spec', () => {
           });
         });
       });
+    });
 
-      afterAll(done => {
-        driver.quit().then(() => server.close(done));
-      });
+    afterAll(done => {
+      driver.quit().then(() => server.close(done));
     });
   });
 });

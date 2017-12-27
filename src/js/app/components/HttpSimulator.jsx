@@ -17,18 +17,18 @@ class HttpSimulator extends Component {
         </td>
         <td className="description"><p>{description}</p></td>
         <td className="buttons">
-          <button className="btn btn-primary" onClick={() => browserHistory.push(requests(method, path))}>
+          <button className="view-requests btn btn-primary" onClick={() => browserHistory.push(requests(method, path))}>
             View Requests
             </button>
-          <button className="btn btn-danger" onClick={() => dispatch(clearRequests(method, path))}>
+          <button className="clear-requests btn btn-danger" onClick={() => dispatch(clearRequests(method, path))}>
             Clear Requests
           </button>
         </td>
         <td className="buttons">
-          <button className="btn btn-warning" onClick={() => browserHistory.push(update(method, path))}>
+          <button className="update-response btn btn-warning" onClick={() => browserHistory.push(update(method, path))}>
             Update Response
           </button>
-          <button className="btn btn-danger" onClick={() => dispatch(resetResponse(method, path))}>
+          <button className="reset-response btn btn-danger" onClick={() => dispatch(resetResponse(method, path))}>
             Reset Response
           </button>
         </td>

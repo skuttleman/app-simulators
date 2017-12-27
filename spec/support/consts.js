@@ -1,3 +1,5 @@
+const BROWSERS = ['chrome', 'firefox'];
+
 const SIMULATORS = {
   '/test': {
     response: { some: 'response' },
@@ -62,6 +64,7 @@ const SIMULATORS = {
 const PORT = 8000;
 
 module.exports = {
+  BROWSERS,
   SIMULATORS,
   PORT
 };

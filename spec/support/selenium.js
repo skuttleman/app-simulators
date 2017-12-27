@@ -1,4 +1,5 @@
 const { Builder, Capabilities, By } = require('selenium-webdriver');
+const { PORT } = require('./consts');
 
 class DriverAPI {
   constructor(driver, context = '') {
@@ -28,7 +29,7 @@ class DriverAPI {
         if (results.length === 1) {
           return results[0];
         }
-        throw new Error('Expected exactly one element for css', css);
+        throw new Error(`Expected exactly one element for selector: '${css}', but found ${results.length}`);
       });
   }
 
@@ -36,10 +37,20 @@ class DriverAPI {
     return this.driver.quit();
   }
 
+  getCurrentUrl() {
+    return this.driver.getCurrentUrl();
+  }
+
   get(url) {
     return this.driver.get(url);
   }
+
+  visitHome() {
+    return this.get(`http://localhost:${PORT}/`);
+  }
 }
+
+const getCurrentUrl = driver => driver.getCurrentUrl();
 
 const getInnerText = element => element.getAttribute('innerText');
 
@@ -51,8 +62,9 @@ const within = css => driver => new DriverAPI(driver, css);
 
 module.exports = {
   DriverAPI,
-  selectElement,
+  getCurrentUrl,
   getInnerText,
+  selectElement,
   withDriver,
   within
 };
