@@ -28,6 +28,7 @@
   box-sizing: border-box;
   resize: none;
   height: calc(50vh - 200px);
+  min-height: 124px;
   border-radius: 4px;
   outline: none;
   box-shadow: 1px 1px 1px 1px solid black;
@@ -39,5 +40,6 @@
   }
   .CodeMirror {
     height: calc(50vh - 224px);
+    min-height: 100px;
   }
 }
